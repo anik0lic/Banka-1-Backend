@@ -31,4 +31,6 @@ public class CreateAccountWithoutOwnerIdDTO {
     private Boolean createCard;
 
     private Double balance;
+
+    private CreateCompanyDTO companyData;
 }
