@@ -210,10 +210,10 @@ func (c *OTCTradeController) AcceptOTCTrade(ctx *fiber.Ctx) error {
 		})
 	}
 
-	if trade.SellerID != userID {
+	if trade.ModifiedBy != nil && *trade.ModifiedBy == userID {
 		return ctx.Status(fiber.StatusForbidden).JSON(types.Response{
 			Success: false,
-			Error:   "Nemate pravo da prihvatite ovu ponudu",
+			Error:   "Nemate pravo da prihvatite ovu ponudu jer ste je vi poslednji menjali",
 		})
 	}
 
@@ -234,7 +234,7 @@ func (c *OTCTradeController) AcceptOTCTrade(ctx *fiber.Ctx) error {
 
 	var existingContracts []types.OptionContract
 	if err := db.DB.
-		Where("seller_id = ? AND portfolio_id = ? AND is_exercised = false AND status = ?", userID, portfolio.ID, "active").
+		Where("seller_id = ? AND portfolio_id = ? AND is_exercised = false AND status = ?", trade.SellerID, portfolio.ID, "active").
 		Find(&existingContracts).Error; err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(types.Response{
 			Success: false,
@@ -263,8 +263,6 @@ func (c *OTCTradeController) AcceptOTCTrade(ctx *fiber.Ctx) error {
 			Error:   "Greška pri ažuriranju ponude",
 		})
 	}
-
-	// TODO: Poziv ka banking-servisu za prenos premije
 
 	contract := types.OptionContract{
 		OTCTradeID:   trade.ID,
@@ -305,13 +303,33 @@ func (c *OTCTradeController) AcceptOTCTrade(ctx *fiber.Ctx) error {
 			break
 		}
 	}
+
+	// Ako nema USD racun,propbati RSD
+	// if buyerAccountID == -1 {
+	// 	for _, acc := range buyerAccounts {
+	// 		if acc.CurrencyType == "RSD" {
+	// 			buyerAccountID = acc.ID
+	// 			break
+	// 		}
+	// 	}
+	// }
+
 	for _, acc := range sellerAccounts {
 		if acc.CurrencyType == "USD" {
 			sellerAccountID = acc.ID
 			break
 		}
 	}
-
+	// Ako nema USD racun,propbati RSD
+	// if sellerAccountID == -1 {
+	// 	for _, acc := range sellerAccounts {
+	// 		if acc.CurrencyType == "RSD" {
+	// 			sellerAccountID = acc.ID
+	// 			break
+	// 		}
+	// 	}
+	// }
+	// DODATI OBRADU VALUTI RACUNA NA BANKING STRANI
 	if buyerAccountID == -1 || sellerAccountID == -1 {
 		return ctx.Status(fiber.StatusBadRequest).JSON(types.Response{
 			Success: false,
@@ -325,7 +343,6 @@ func (c *OTCTradeController) AcceptOTCTrade(ctx *fiber.Ctx) error {
 			buyerAccount = &acc
 			break
 		}
-
 	}
 	if buyerAccount == nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(types.Response{
@@ -425,6 +442,16 @@ func (c *OTCTradeController) ExecuteOptionContract(ctx *fiber.Ctx) error {
 			break
 		}
 	}
+
+	// if buyerAccountID == -1 {
+	// 	for _, acc := range buyerAccounts {
+	// 		if acc.CurrencyType == "RSD" {
+	// 			buyerAccountID = acc.ID
+	// 			break
+	// 		}
+	// 	}
+	// }
+
 	for _, acc := range sellerAccounts {
 		if acc.CurrencyType == "USD" {
 			sellerAccountID = acc.ID
@@ -432,6 +459,14 @@ func (c *OTCTradeController) ExecuteOptionContract(ctx *fiber.Ctx) error {
 		}
 	}
 
+	// if sellerAccountID == -1 {
+	// 	for _, acc := range sellerAccounts {
+	// 		if acc.CurrencyType == "RSD" {
+	// 			sellerAccountID = acc.ID
+	// 			break
+	// 		}
+	// 	}
+	// }
 	if buyerAccountID == -1 || sellerAccountID == -1 {
 		return ctx.Status(fiber.StatusBadRequest).JSON(types.Response{
 			Success: false,
@@ -521,6 +556,49 @@ func (c *OTCTradeController) GetUserOptionContracts(ctx *fiber.Ctx) error {
 	})
 }
 
+func (c *OTCTradeController) RejectOTCTrade(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	userID := uint(ctx.Locals("user_id").(float64))
+
+	var trade types.OTCTrade
+	if err := db.DB.First(&trade, id).Error; err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(types.Response{
+			Success: false,
+			Error:   "Ponuda nije pronađena",
+		})
+	}
+
+	if trade.ModifiedBy != nil && *trade.ModifiedBy == userID {
+		return ctx.Status(fiber.StatusForbidden).JSON(types.Response{
+			Success: false,
+			Error:   "Ne možete odbiti sopstvenu ponudu",
+		})
+	}
+
+	if trade.Status != "pending" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(types.Response{
+			Success: false,
+			Error:   "Ponuda više nije aktivna",
+		})
+	}
+
+	trade.Status = "rejected"
+	trade.LastModified = time.Now().Unix()
+	trade.ModifiedBy = &userID
+
+	if err := db.DB.Save(&trade).Error; err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(types.Response{
+			Success: false,
+			Error:   "Greška pri odbijanju ponude",
+		})
+	}
+
+	return ctx.JSON(types.Response{
+		Success: true,
+		Data:    "Ponuda je uspešno odbijena",
+	})
+}
+
 type PortfolioControllerr struct{}
 
 func NewPortfolioControllerr() *PortfolioControllerr {
@@ -559,6 +637,7 @@ func InitOTCTradeRoutes(app *fiber.App) {
 	otc.Post("/offer", middlewares.RequirePermission("user.customer.otc_trade"), otcController.CreateOTCTrade)
 	otc.Put("/offer/:id/counter", middlewares.RequirePermission("user.customer.otc_trade"), otcController.CounterOfferOTCTrade)
 	otc.Put("/offer/:id/accept", middlewares.RequirePermission("user.customer.otc_trade"), otcController.AcceptOTCTrade)
+	otc.Put("/offer/:id/reject", middlewares.RequirePermission("user.customer.otc_trade"), otcController.RejectOTCTrade)
 	otc.Put("/option/:id/execute", middlewares.RequirePermission("user.customer.otc_trade"), otcController.ExecuteOptionContract)
 	otc.Get("/offer/active", otcController.GetActiveOffers)
 	otc.Get("/option/contracts", otcController.GetUserOptionContracts)

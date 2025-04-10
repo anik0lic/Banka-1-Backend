@@ -12,4 +12,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
     List<Transfer> findAllByStatusAndCreatedAtBefore(TransferStatus status,Long createdAt);
 
+    List<Transfer> findAllByFromAccountId_OwnerID(Long ownerId);
+
+
 }

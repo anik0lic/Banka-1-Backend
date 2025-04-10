@@ -1,9 +1,11 @@
 package com.banka1.banking.controllers;
 
 import com.banka1.banking.aspect.AccountAuthorization;
+import com.banka1.banking.models.Transfer;
 import com.banka1.banking.services.TransferService;
 import com.banka1.banking.dto.InternalTransferDTO;
 import com.banka1.banking.dto.MoneyTransferDTO;
+import com.banka1.banking.services.implementation.AuthService;
 import com.banka1.banking.utils.ResponseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,10 +17,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +29,7 @@ import java.util.Map;
 public class TransferController {
 
     private final TransferService transferService;
+    private final AuthService authService;
 
     @Operation(
             summary = "Interni prenos",
@@ -144,5 +146,52 @@ public class TransferController {
         }
     }
 
+    @GetMapping("/mobile-transfers")
+    @AccountAuthorization(customerOnlyOperation = true)
+    @Operation(
+            summary = "Prikaz svih transfera",
+            description = "Prikazuje sve transfere koji su napravljeni sa računa korisnika."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Uspešno prikazani transferi", content = @Content(mediaType = "application/json",
+                    examples = @ExampleObject(value = """
+                            {
+                                "success": true,
+                                "data": [
+                                    {
+                                        "transferId": 1,
+                                        "fromAccountId": 1,
+                                        "toAccountId": 2,
+                                        "amount": 500.0,
+                                        "status": "COMPLETED"
+                                    },
+                                    {
+                                        "transferId": 2,
+                                        "fromAccountId": 1,
+                                        "toAccountId": 3,
+                                        "amount": 200.0,
+                                        "status": "PENDING"
+                                    }
+                                ]
+                            }
+                            """))
+            ),
+            @ApiResponse(responseCode = "400", description = "Greška prilikom prikaza transfera", content = @Content(mediaType = "application/json",
+                    examples = @ExampleObject(value = """
+                            {
+                                "success": false,
+                                "error": "Greška prilikom prikaza transfera."
+                            }
+                            """))
+            )
+    })
+    public ResponseEntity<?> getTransfers(@RequestHeader(value = "Authorization") String authorization) {
+        try {
+            Long userId = authService.parseToken(authService.getToken(authorization)).get("id", Long.class);
+            return ResponseTemplate.create(ResponseEntity.status(HttpStatus.OK), true, Map.of("transfers", transferService.getAllTransfersStartedByUser(userId)), null);
+        } catch (Exception e) {
+            return ResponseTemplate.create(ResponseEntity.status(HttpStatus.BAD_REQUEST), false, null, e.getMessage());
+        }
+    }
 
 }
