@@ -47,7 +47,10 @@ public class CreateAccountDTO {
         setOwnerID(ownerID);
         setCreateCard(createAccountWithoutOwnerIdDTO.getCreateCard());
         setBalance(createAccountWithoutOwnerIdDTO.getBalance());
-        setCompanyData(createAccountWithoutOwnerIdDTO.getCompanyData());
-        companyData.setOwnerId(ownerID);
+        if (createAccountWithoutOwnerIdDTO.getCompanyData() != null) {
+            CreateCompanyDTO companyData = createAccountWithoutOwnerIdDTO.getCompanyData();
+            companyData.setOwnerId(ownerID);
+            setCompanyData(companyData);
+        }
     }
 }
