@@ -1,19 +1,14 @@
 package com.banka1.user.DTO.banking;
 
-import com.banka1.user.DTO.banking.helper.BusinessActivityCode;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.banka1.common.model.BusinessActivityCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @RequiredArgsConstructor
 @Data
-@Setter
-@Schema(description = "Informacije o firmi")
 public class CreateCompanyDTO {
 
     private String name;
@@ -33,5 +28,4 @@ public class CreateCompanyDTO {
     private BusinessActivityCode bas;
 
     private Long ownerId;
-
 }

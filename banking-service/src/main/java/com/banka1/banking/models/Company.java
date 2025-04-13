@@ -1,7 +1,6 @@
 package com.banka1.banking.models;
 
-import com.banka1.banking.models.helper.BusinessActivityCode;
-
+import com.banka1.common.model.BusinessActivityCode;
 import jakarta.persistence.*;
 
 import lombok.Getter;

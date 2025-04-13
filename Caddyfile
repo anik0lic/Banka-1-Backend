@@ -17,7 +17,11 @@ localhost {
 
 	handle_path /api/notification/* {
     	  reverse_proxy host.docker.internal:8083
-    }
+  }
+
+  handle_path /api/support/* {
+    reverse_proxy host.docker.internal:8000
+  }
 
 	handle {
 		# Frontend

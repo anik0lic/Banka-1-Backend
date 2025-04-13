@@ -1,16 +1,28 @@
 package orders
 
 import (
+	"log"
+
 	"banka1.com/db"
 	"banka1.com/types"
-	"log"
 )
 
 func LoadOrders() {
+
+	var msftSecurity types.Security
+	var aaplSecurity types.Security
+	var googlSecurity types.Security
+	var nvdaSecurity types.Security
+
+	db.DB.Where("ticker = ?", "MSFT").First(&msftSecurity)
+	db.DB.Where("ticker = ?", "AAPL").First(&aaplSecurity)
+	db.DB.Where("ticker = ?", "GOOGL").First(&googlSecurity)
+	db.DB.Where("ticker = ?", "NVDA").First(&nvdaSecurity)
+
 	order1 := types.Order{
 		UserID:       3,
 		AccountID:    1,
-		SecurityID:   1,
+		SecurityID:   msftSecurity.ID,
 		OrderType:    "Market",
 		Quantity:     10,
 		ContractSize: 1,
@@ -22,7 +34,7 @@ func LoadOrders() {
 	order2 := types.Order{
 		UserID:       3,
 		AccountID:    1,
-		SecurityID:   2,
+		SecurityID:   aaplSecurity.ID,
 		OrderType:    "Market",
 		Quantity:     5,
 		ContractSize: 1,
@@ -53,9 +65,25 @@ func LoadOrders() {
 }
 
 func LoadPortfolios() {
+
+	// get msft Security
+	// select from securities where ticker = 'MSFT'
+
+	var msftSecurity types.Security
+	var aaplSecurity types.Security
+	var googlSecurity types.Security
+	var nvdaSecurity types.Security
+
+	db.DB.Where("ticker = ?", "MSFT").First(&msftSecurity)
+	db.DB.Where("ticker = ?", "AAPL").First(&aaplSecurity)
+	db.DB.Where("ticker = ?", "GOOGL").First(&googlSecurity)
+	db.DB.Where("ticker = ?", "NVDA").First(&nvdaSecurity)
+
+	log.Println("MSFT Security preuzeta:", msftSecurity.Ticker)
+
 	portfolio1 := types.Portfolio{
 		UserID:        1,
-		SecurityID:    2,
+		SecurityID:    aaplSecurity.ID, // AAPL
 		Quantity:      20,
 		PurchasePrice: 199.99,
 		PublicCount:   10,
@@ -63,7 +91,7 @@ func LoadPortfolios() {
 
 	portfolio2 := types.Portfolio{
 		UserID:        1,
-		SecurityID:    1,
+		SecurityID:    googlSecurity.ID, // GOOGL
 		Quantity:      20,
 		PurchasePrice: 299.99,
 		PublicCount:   10,
@@ -71,7 +99,7 @@ func LoadPortfolios() {
 
 	portfolio3 := types.Portfolio{
 		UserID:        3,
-		SecurityID:    3, // MSFT
+		SecurityID:    msftSecurity.ID, // MSFT
 		Quantity:      20,
 		PurchasePrice: 299.99,
 		PublicCount:   10,
@@ -79,7 +107,7 @@ func LoadPortfolios() {
 
 	portfolio4 := types.Portfolio{
 		UserID:        3,
-		SecurityID:    4,
+		SecurityID:    nvdaSecurity.ID, // NVDA
 		Quantity:      20,
 		PurchasePrice: 299.99,
 		PublicCount:   10,

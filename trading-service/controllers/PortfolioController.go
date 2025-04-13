@@ -90,8 +90,26 @@ func (sc *PortfolioController) UpdatePublicCount(c *fiber.Ctx) error {
 	})
 }
 
+func (pc *PortfolioController) GetAllPortfolios(c *fiber.Ctx) error {
+	var portfolios []types.Portfolio
+
+	if err := db.DB.Preload("Security").Find(&portfolios).Error; err != nil {
+		return c.Status(500).JSON(types.Response{
+			Success: false,
+			Error:   "Greška pri dohvatanju portfolija: " + err.Error(),
+		})
+	}
+
+	return c.JSON(types.Response{
+		Success: true,
+		Data:    portfolios,
+	})
+}
+
 func InitPortfolioRoutes(app *fiber.App) {
 	portfolioController := NewPortfolioController()
 
 	app.Put("/securities/public-count", middlewares.Auth, portfolioController.UpdatePublicCount)
+	app.Get("/portfolios", portfolioController.GetAllPortfolios)
+
 }

@@ -852,5 +852,9 @@ public class TransferService {
         return transferRepository.findById(transferId)
                 .orElseThrow(() -> new RuntimeException("Transfer sa ID-jem " + transferId + " nije pronađen"));
     }
+
+    public List<Transfer> getAllTransfersStartedByUser(Long userId) {
+        return transferRepository.findAllByFromAccountId_OwnerID(userId);
+    }
 }
 

@@ -4,7 +4,6 @@ import com.banka1.user.DTO.banking.helper.AccountStatus;
 import com.banka1.user.DTO.banking.helper.AccountSubtype;
 import com.banka1.user.DTO.banking.helper.AccountType;
 import com.banka1.user.DTO.banking.helper.CurrencyType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -33,6 +32,5 @@ public class CreateAccountWithoutOwnerIdDTO {
 
     private Double balance;
 
-    @NotNull
     private CreateCompanyDTO companyData;
 }

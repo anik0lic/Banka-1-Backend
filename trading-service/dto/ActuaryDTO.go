@@ -41,3 +41,9 @@ type EmployeeResponse struct {
 	IsAdmin     bool     `json:"isAdmin"`
 	Permissions []string `json:"permissions"`
 }
+
+type ActuaryProfitDTO struct {
+	FullName string  `json:"fullName"`
+	Profit   float64 `json:"profit"`
+	Role     string  `json:"role"`
+}

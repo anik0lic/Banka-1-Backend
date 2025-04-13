@@ -13,3 +13,7 @@ type Transaction struct {
 	TotalPrice   float64   `gorm:"not null"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
+
+func (Transaction) TableName() string {
+	return "transactions"
+}

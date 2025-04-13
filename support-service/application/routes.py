@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.chatbot import get_response
-
+from .chatbot import customer_service_response 
 router = APIRouter()
 
 class ChatMessage(BaseModel):
@@ -9,4 +8,4 @@ class ChatMessage(BaseModel):
 
 @router.post("/")
 def chat_endpoint(msg: ChatMessage):
-    return {"response": get_response(msg.message)}
+    return {"response": customer_service_response(msg.message)}  

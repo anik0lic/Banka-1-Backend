@@ -1,6 +1,6 @@
 package com.banka1.banking.dto;
 
-import com.banka1.banking.models.helper.BusinessActivityCode;
+import com.banka1.common.model.BusinessActivityCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

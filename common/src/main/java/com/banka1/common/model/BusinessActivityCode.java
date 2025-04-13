@@ -1,4 +1,4 @@
-package com.banka1.banking.models.helper;
+package com.banka1.common.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Getter
 public enum BusinessActivityCode {
 
@@ -97,4 +98,5 @@ public enum BusinessActivityCode {
         return code;
     }
 }
+
 

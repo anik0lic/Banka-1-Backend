@@ -75,7 +75,10 @@ public class AccountService {
             } else {
                 System.out.println("Company exists, using existing one");
                 companyToUse = existingCompany;
-                if (!companyToUse.getOwnerID().equals(owner.getId())) {
+                if (owner == null || owner.getId() == null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Kompanije vec ima vlasnika");
+                }
+                if (companyToUse.getOwnerID() == null || !companyToUse.getOwnerID().equals(owner.getId())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Korisnik nije vlasnik kompanije");
                 }
             }

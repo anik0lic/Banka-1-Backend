@@ -3,9 +3,9 @@ package com.banka1.banking.services;
 import com.banka1.banking.dto.CreateCompanyDTO;
 import com.banka1.banking.models.Account;
 import com.banka1.banking.models.Company;
-import com.banka1.banking.models.helper.BusinessActivityCode;
 import com.banka1.banking.repository.AccountRepository;
 import com.banka1.banking.repository.CompanyRepository;
+import com.banka1.common.model.BusinessActivityCode;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 

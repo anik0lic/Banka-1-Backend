@@ -323,6 +323,7 @@ func markContractAsExercised(uid string) error {
 		Updates(map[string]interface{}{
 			"is_exercised": true,
 			"exercised_at": now,
+			"status":       "closed",
 		}).Error
 }
 
