@@ -18,8 +18,8 @@ public class AuthorizedPerson {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
-    private String birthDate;
+    @Column(nullable = true)
+    private Long birthDate;
 
     @Column(nullable = false)
     private String phoneNumber;

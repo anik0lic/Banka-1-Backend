@@ -416,7 +416,73 @@ func InitActuaryRoutes(app *fiber.App) {
 	app.Get("/actuaries/all", middlewares.Auth, actuaryController.GetAllActuariesDB)
 	//	app.Get("/actuaries/filter", middlewares.Auth, actuaryController.FilterActuaries)
 	app.Get("/actuaries/filter", middlewares.Auth, actuaryController.FilterActuariesDB)
+	app.Get("/actuaries/profits", middlewares.Auth, actuaryController.GetActuaryProfits)
 	app.Get("/actuaries/:ID", middlewares.Auth, actuaryController.GetActuaryByID)
 	app.Put("/actuaries/:ID/limit", middlewares.Auth, actuaryController.ChangeAgentLimits)
 	app.Put("/actuaries/:ID/reset-used-limit", middlewares.Auth, actuaryController.ResetActuaryLimit)
+}
+
+func (ac *ActuaryController) GetActuaryProfits(c *fiber.Ctx) error {
+
+	var actuaries []types.Actuary
+	if result := db.DB.Find(&actuaries); result.Error != nil {
+		return c.Status(500).JSON(types.Response{
+			Success: false,
+			Error:   "Greška pri preuzimanju aktuara",
+		})
+	}
+
+	var latestMonth string
+	if err := db.DB.Raw(`SELECT MAX(month_year) FROM tax`).Scan(&latestMonth).Error; err != nil {
+		return c.Status(500).JSON(types.Response{
+			Success: false,
+			Error:   "Greška pri preuzimanju najnovijeg meseca",
+		})
+	}
+
+	type TaxEntry struct {
+		UserID        uint
+		TaxableProfit float64
+	}
+
+	var taxEntries []TaxEntry
+	err := db.DB.Raw(`
+		SELECT user_id, SUM(taxable_profit) AS taxable_profit
+		FROM tax
+		WHERE month_year = ? AND is_paid = false
+		GROUP BY user_id
+	`, latestMonth).Scan(&taxEntries).Error
+
+	if err != nil {
+		return c.Status(500).JSON(types.Response{
+			Success: false,
+			Error:   "Greška pri sabiranju profita: " + err.Error(),
+		})
+	}
+
+	taxMap := make(map[uint]float64)
+	for _, t := range taxEntries {
+		taxMap[t.UserID] = t.TaxableProfit
+	}
+
+	var results []dto.ActuaryProfitDTO
+	for _, a := range actuaries {
+		if profit, exists := taxMap[a.UserID]; exists {
+			normalized := strings.ToLower(a.Department)
+			if normalized == "admin" {
+				normalized = "supervisor"
+			}
+
+			results = append(results, dto.ActuaryProfitDTO{
+				FullName: a.FullName,
+				Profit:   profit,
+				Role:     normalized,
+			})
+		}
+	}
+
+	return c.JSON(types.Response{
+		Success: true,
+		Data:    results,
+	})
 }

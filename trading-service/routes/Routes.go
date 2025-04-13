@@ -17,4 +17,7 @@ func Setup(app *fiber.App) {
 
 	app.Group("/actuaries", middlewares.Auth, middlewares.DepartmentCheck("supervisor"))
 
+	//app.Get("/actuaries/profits", actuaryController.GetActuaryProfits)
+	//app.Get("/securities/:id", portfolioController.GetUserSecurities)
+
 }

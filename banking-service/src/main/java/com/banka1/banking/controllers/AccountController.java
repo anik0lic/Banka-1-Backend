@@ -68,7 +68,7 @@ public class AccountController {
             """))
         )
     })
-    @AccountAuthorization(employeeOnlyOperation = true)
+   @AccountAuthorization(employeeOnlyOperation = true)
     public ResponseEntity<?> createAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO, @RequestHeader(value = "Authorization", required = false) String authorization) {
         Account savedAccount;
         try {

@@ -1,0 +1,68 @@
+1. How can I create a current or foreign exchange account?
+- To create a current or foreign exchange account, you need to contact the Bank to create it for you. Then you can also request the creation of a card for your account.
+
+2. What are the steps required to create a card with an account?
+- You need to have an active account, with no more than one card if it is a personal account. If it is a business account, the maximum number of cards per person is one, which is created when creating the account and then you can request a card only for your employee.
+
+3. How do I check my account balance?
+- You can check your account balance in the "Accounts" option within the application. The display will include the currently available balance, as well as a list of transactions.
+
+4. How do I make a payment through the application?
+- Go to the "Payments" option within the application. You can select a payee or add a new one, enter the amount and confirm the transaction. Payments require verification, use the generated code from the mobile app.
+
+5. What are the steps to transfer money between my accounts?
+- In the "Transfers" option, select the accounts you want to transfer money between, enter the amount and confirm the transfer.
+
+6. How do I convert currencies?
+- In the "Exchange" option within the app, you can select the currencies you want to convert and the amount, which will show you how much money you would get in the conversion performed in Transfers if you transfer money to your accounts.
+
+7. What is needed to apply for a loan?
+- Go to the "Loans" page, select the type of loan you want, enter the required information and amounts, and follow the steps to apply. The staff will review the terms and conditions and decide if you can be approved for the loan.
+
+8. How can I access my account and transaction details?
+- In the "Accounts" option, click on a specific account to view the details. You can see all transactions, account balance and other relevant information.
+
+9. How do I use the automatic loan installment deduction feature?
+- When you take out a loan, the system will automatically make payments based on the set payment schedule if there are sufficient funds in the account, otherwise there are penalties.
+
+10. How can I trade stocks?
+- You can access the "Securities" or "My Portfolio" option within the application, where you can buy or sell stocks at current market conditions.
+
+11. What is a Market Order and how can I place one?
+- A Market Order is an order to buy or sell at the currently best available price on the market. You can select this option when placing a trading order within the "Securities" option.
+
+12. How can I access details of my stock market transactions?
+- You can see details of your transactions in the "My Portfolio" option, where all your stock market activities are listed, including purchases, sales and current positions.
+
+13. What are the steps to track the performance of my investments?
+- In "My Portfolio" you can track the performance of all your investments, including the percentage of profit or loss, as well as the historical performance of each investment instrument.
+
+14. How do I use options for stock trading?
+- You can trade options by selecting the desired financial instrument in the "Securities" option, where you set conditions such as strike price and expiration date.
+
+15. What is OTC trading and how can I participate?
+- OTC (Over-the-Counter) trading involves direct trading between participants, without the mediation of a traditional stock exchange. You can access OTC trading through the "OTC Offers and Contracts" section of the application, where you can view available offers or place your shares for sale.
+
+16. How do I access OTC trading offers?
+- In the app, go to "OTC Offers and Contracts" where you can view all active offers, negotiate prices and quantities, and accept or reject offers.
+
+17. How can I view and exercise my option contracts?
+
+- In the "OTC Offers and Contracts" section, you can view all concluded contracts. For contracts that are still valid, you have the option to exercise them according to the terms of the contract. If the contract has an exercise option, you can choose to exercise your right to buy or sell securities under pre-defined terms.
+
+18. How do I reset my online banking password?
+
+- To reset your password, go to the login page and click on 'Forgot password'. Follow the reset instructions, which include verification via email.
+
+19. What should I do if I lose my card?
+
+- In case of loss of the card, immediately block it via the app in the 'Cards' section or by calling our customer support. You can also request the issuance of a new card.
+
+20. What should I do if I suspect someone has accessed my account?
+- In case of suspicion of unauthorized access, change your passwords immediately and contact customer support for further steps and to verify the security of your account.
+
+21. How do I increase my limit?
+- To change your limits, go to the same sections and select the option to change your limit. Enter the desired amount for the daily or monthly limit and confirm the change.
+
+22. How do I check my limit?
+- You can check your card and account limits on the bank's website, by accessing the 'Cards' section for card limits, or 'Accounts' for account limits. There you will see your current limits.

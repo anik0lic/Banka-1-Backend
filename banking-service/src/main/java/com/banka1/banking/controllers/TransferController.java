@@ -1,6 +1,7 @@
 package com.banka1.banking.controllers;
 
 import com.banka1.banking.aspect.AccountAuthorization;
+import com.banka1.banking.aspect.Authorization;
 import com.banka1.banking.models.Transfer;
 import com.banka1.banking.services.TransferService;
 import com.banka1.banking.dto.InternalTransferDTO;
@@ -147,7 +148,7 @@ public class TransferController {
     }
 
     @GetMapping("/mobile-transfers")
-    @AccountAuthorization(customerOnlyOperation = true)
+    @Authorization
     @Operation(
             summary = "Prikaz svih transfera",
             description = "Prikazuje sve transfere koji su napravljeni sa računa korisnika."
@@ -187,6 +188,7 @@ public class TransferController {
     })
     public ResponseEntity<?> getTransfers(@RequestHeader(value = "Authorization") String authorization) {
         try {
+            System.out.println("Authorization: " + authorization);
             Long userId = authService.parseToken(authService.getToken(authorization)).get("id", Long.class);
             return ResponseTemplate.create(ResponseEntity.status(HttpStatus.OK), true, Map.of("transfers", transferService.getAllTransfersStartedByUser(userId)), null);
         } catch (Exception e) {

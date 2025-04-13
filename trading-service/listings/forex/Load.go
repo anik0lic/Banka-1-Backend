@@ -1,14 +1,15 @@
 package forex
 
 import (
-	"banka1.com/db"
-	"banka1.com/types"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"strings"
 	"time"
+
+	"banka1.com/db"
+	"banka1.com/types"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 var currencies = []string{
@@ -48,6 +49,13 @@ func CreatePairsFromAPI(base string) error {
 		log.Warnf("Failed to unmarshal %s: %v\n", url, err)
 		return nil
 	}
+
+	var exchange types.Exchange
+	if err := db.DB.Where("mic_code = ?", "XNAS").First(&exchange).Error; err != nil {
+		return fmt.Errorf("failed to find exchange with MIC code %s: %w", "XNAS", err)
+	}
+	fmt.Printf("Found exchange: %s (ID: %d)\n", exchange.Name, exchange.ID)
+
 	rates := data[strings.ToLower(base)].(map[string]interface{})
 	for _, quote := range currencies {
 		if quote == base {
@@ -62,7 +70,7 @@ func CreatePairsFromAPI(base string) error {
 			listing = types.Listing{
 				Ticker:       ticker,
 				Name:         fmt.Sprintf("Forex %s", ticker),
-				ExchangeID:   1,
+				ExchangeID:   exchange.ID,
 				LastRefresh:  lastRefresh,
 				Price:        float32(rate),
 				Ask:          float32(rate),

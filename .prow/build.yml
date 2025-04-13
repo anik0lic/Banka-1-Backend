@@ -70,7 +70,7 @@ postsubmits:
               # Promeniti petlju tako sadrži sve mikroservise koje imate, npr:
               #   for serviceName in user-service berza-service banka-service; do
               gradle bootBuildImage
-              for serviceName in user-service banking-service notification-service trading-service; do
+              for serviceName in user-service banking-service notification-service trading-service support-service; do
                 
                 # Pravi kopiju prethodno buildovanog image sa tagom zasnovanim na commit hash-u.
                 docker tag ${serviceName}:0.0.1-SNAPSHOT harbor.k8s.elab.rs/${TEAM_NAME}/${serviceName}:latest

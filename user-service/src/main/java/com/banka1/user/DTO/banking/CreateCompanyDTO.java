@@ -1,4 +1,4 @@
-package com.banka1.banking.dto;
+package com.banka1.user.DTO.banking;
 
 import com.banka1.common.model.BusinessActivityCode;
 import jakarta.validation.constraints.NotBlank;

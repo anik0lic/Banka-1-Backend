@@ -36,6 +36,12 @@ func LoadStockFromAPI(stockRequest finhub.Stock) error {
 	// volume := strconv.ParseInt(mostRecentData["5. volume"], 10, 64)
 	lastRefresh := time.Now()
 
+	var exchange types.Exchange
+	if err := db.DB.Where("mic_code = ?", stockRequest.Mic).First(&exchange).Error; err != nil {
+		return fmt.Errorf("failed to find exchange with MIC code %s: %w", stockRequest.Mic, err)
+	}
+	fmt.Printf("Found exchange: %s (ID: %d)\n", exchange.Name, exchange.ID)
+
 	// Begin transaction
 	tx := db.DB.Begin()
 	var type_ string = "Stock"
@@ -51,7 +57,7 @@ func LoadStockFromAPI(stockRequest finhub.Stock) error {
 		listing = types.Listing{
 			Ticker:       stockRequest.Symbol,
 			Name:         strings.Split(stockRequest.Symbol, ".")[0] + " Inc.", // Simple name
-			ExchangeID:   1,
+			ExchangeID:   exchange.ID,
 			LastRefresh:  lastRefresh,
 			Price:        *price,
 			Ask:          *high,

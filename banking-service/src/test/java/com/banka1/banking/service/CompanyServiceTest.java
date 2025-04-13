@@ -2,9 +2,9 @@ package com.banka1.banking.service;
 
 import com.banka1.banking.dto.CreateCompanyDTO;
 import com.banka1.banking.models.Company;
-import com.banka1.banking.models.helper.BusinessActivityCode;
 import com.banka1.banking.repository.CompanyRepository;
 import com.banka1.banking.services.CompanyService;
+import com.banka1.common.model.BusinessActivityCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,5 +1,6 @@
 package com.banka1.banking.services;
 
+import com.banka1.banking.dto.MoneyTransferDTO;
 import com.banka1.banking.models.Account;
 import com.banka1.banking.repository.AccountRepository;
 import com.banka1.banking.services.implementation.AuthService;
@@ -16,48 +17,45 @@ public class OrderService {
     private final AccountService accountService;
     private final BankAccountUtils bankAccountUtils;
     private final AccountRepository accountRepository;
+    private final TransferService transferService;
 
     @Transactional
     public Double executeOrder(String direction, Long userId, Long accountId, Double amount) {
         Account account = accountService.findById(accountId);
         Account bankAccount = bankAccountUtils.getBankAccountForCurrency(account.getCurrencyType());
 
-        Double finalAmount = amount;
+        if (!Objects.equals(account.getOwnerID(), userId)) {
+            throw new RuntimeException("Korisnik nije vlasnik računa");
+        }
 
-        if(Objects.equals(account.getId(), bankAccount.getId())) {
-            if(direction.compareToIgnoreCase("buy") == 0) {
-                account.setBalance(account.getBalance() - finalAmount);
-            } else if(direction.compareToIgnoreCase("sell") == 0) {
-                account.setBalance(account.getBalance() + finalAmount);
+        if (direction.equalsIgnoreCase("buy") && account.getBalance() < amount) {
+            throw new IllegalArgumentException("Nedovoljno sredstava na računu");
+        }
+
+        if (Objects.equals(account.getId(), bankAccount.getId())) {
+            if (direction.equalsIgnoreCase("buy")) {
+                account.setBalance(account.getBalance() - amount);
+            } else if (direction.equalsIgnoreCase("sell")) {
+                account.setBalance(account.getBalance() + amount);
             } else {
-                throw new RuntimeException();
+                throw new IllegalArgumentException("Nepoznata direkcija");
             }
 
             accountRepository.save(account);
         } else {
-            if(!Objects.equals(account.getOwnerID(), userId))
-                throw new RuntimeException();
+            MoneyTransferDTO dto = new MoneyTransferDTO();
+            dto.setFromAccountNumber(direction.equalsIgnoreCase("buy") ? account.getAccountNumber() : bankAccount.getAccountNumber());
+            dto.setRecipientAccount(direction.equalsIgnoreCase("buy") ? bankAccount.getAccountNumber() : account.getAccountNumber());
+            dto.setAmount(amount);
+            dto.setReceiver("Order Execution");
+            dto.setAdress("System");
+            dto.setPayementCode("999");
+            dto.setPayementReference("Auto");
+            dto.setPayementDescription("Realizacija naloga");
 
-            // TODO: provizije
-
-            if(direction.compareToIgnoreCase("buy") == 0) {
-                if(account.getBalance() < finalAmount) {
-                    throw new IllegalArgumentException();
-                }
-
-                bankAccount.setBalance(bankAccount.getBalance() + finalAmount);
-                account.setBalance(account.getBalance() - finalAmount);
-            } else if(direction.compareToIgnoreCase("sell") == 0) {
-                bankAccount.setBalance(bankAccount.getBalance() - finalAmount);
-                account.setBalance(account.getBalance() + finalAmount);
-            } else {
-                throw new RuntimeException();
-            }
-
-            accountRepository.save(account);
-            accountRepository.save(bankAccount);
+            transferService.createMoneyTransfer(dto);
         }
 
-        return finalAmount;
+        return amount;
     }
 }

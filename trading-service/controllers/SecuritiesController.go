@@ -119,6 +119,24 @@ func (sc *SecuritiesController) GetUserSecurities(c *fiber.Ctx) error {
 	})
 }
 
+func (sc *SecuritiesController) GetAvailableSecurities(c *fiber.Ctx) error {
+	var securities []types.Security
+
+	if err := db.DB.Find(&securities).Error; err != nil {
+		log.Printf("[ERROR] Failed to fetch available securities: %v\n", err)
+		return c.Status(500).JSON(types.Response{
+			Success: false,
+			Error:   "Failed to fetch available securities.",
+		})
+	}
+
+	log.Printf("[INFO] Fetched %d available securities.\n", len(securities))
+	return c.JSON(types.Response{
+		Success: true,
+		Data:    securities,
+	})
+}
+
 func listingToSecurity(l *types.Listing) (*types.Security, error) {
 	var security types.Security
 	previousClose := getPreviousCloseForListing(l.ID)
@@ -237,6 +255,6 @@ func InitSecuritiesRoutes(app *fiber.App) {
 	securitiesController := NewSecuritiesController()
 
 	app.Get("/securities", securitiesController.getSecurities())
-	app.Get("/securities/available", securitiesController.getSecurities())
+	app.Get("/securities/available", securitiesController.GetAvailableSecurities)
 	app.Get("/securities/:id", securitiesController.GetUserSecurities)
 }

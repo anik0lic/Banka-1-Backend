@@ -1,10 +1,11 @@
 package tax
 
 import (
-	"banka1.com/db"
-	"banka1.com/types"
 	"log"
 	"time"
+
+	"banka1.com/db"
+	"banka1.com/types"
 )
 
 func LoadTax() {

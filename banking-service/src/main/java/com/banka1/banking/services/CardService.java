@@ -55,10 +55,10 @@ public class CardService {
         String cardName = account.getSubtype() + " kartica";
         card.setCardName(cardName);
 
-        if(!account.getSubtype().equals(AccountSubtype.BUSINESS) && cardRepository.findByAccountId(createCardDTO.getAccountID()).isPresent() && cardRepository.findByAccountId(createCardDTO.getAccountID()).get().size() == 2){
+        if(!account.getSubtype().equals(AccountSubtype.BUSINESS) && cardRepository.findByAccountIdAndActive(createCardDTO.getAccountID(), true).isPresent() && cardRepository.findByAccountIdAndActive(createCardDTO.getAccountID(), true).get().size() >= 2){
             throw new RuntimeException("Privatni racun moze biti povezan sa najvise dve kartice!");
         }
-        else if(account.getSubtype().equals(AccountSubtype.BUSINESS) && cardRepository.findByAccountId(createCardDTO.getAccountID()).isPresent() && cardRepository.findByAccountId(createCardDTO.getAccountID()).get().size() == 5){
+        else if(account.getSubtype().equals(AccountSubtype.BUSINESS) && cardRepository.findByAccountIdAndActive(createCardDTO.getAccountID(), true).isPresent() && cardRepository.findByAccountIdAndActive(createCardDTO.getAccountID(), true).get().size() >= 5){
             throw new RuntimeException("Poslovni racun moze biti povezan sa najvise pet kartica!");
         }
 

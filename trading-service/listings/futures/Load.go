@@ -1,16 +1,17 @@
 package futures
 
 import (
-	"banka1.com/db"
-	"banka1.com/types"
 	"encoding/csv"
 	"fmt"
-	"github.com/gofiber/fiber/v2/log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	"banka1.com/db"
+	"banka1.com/types"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 var rootSymbols = map[string]string{
@@ -130,6 +131,13 @@ func loadFutures(path string) error {
 	if err != nil {
 		return fmt.Errorf("failed to read CSV records: %w", err)
 	}
+
+	var exchange types.Exchange
+	if err := db.DB.Where("mic_code = ?", "XNAS").First(&exchange).Error; err != nil {
+		return fmt.Errorf("failed to find exchange with MIC code %s: %w", "XNAS", err)
+	}
+	fmt.Printf("Found exchange: %s (ID: %d)\n", exchange.Name, exchange.ID)
+
 	for i, record := range records {
 		if len(record) != 5 {
 			return fmt.Errorf("invalid record format: expected 5 fields, got %d", len(record))
@@ -159,12 +167,13 @@ func loadFutures(path string) error {
 		lastRefresh := time.Now()
 		tx := db.DB.Begin()
 		price := float32(margin*10) / float32(size)
+
 		var listing types.Listing
 		if err := tx.Where("ticker = ?", ticker).First(&listing).Error; err != nil {
 			listing = types.Listing{
 				Ticker:       ticker,
 				Name:         name,
-				ExchangeID:   1,
+				ExchangeID:   exchange.ID,
 				LastRefresh:  lastRefresh,
 				Price:        price,
 				Ask:          price,

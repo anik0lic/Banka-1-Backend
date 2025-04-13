@@ -35,6 +35,8 @@ public class CreateAccountDTO {
 
     private Double balance;
 
+    private CreateCompanyDTO companyData;
+
     public CreateAccountDTO(CreateAccountWithoutOwnerIdDTO createAccountWithoutOwnerIdDTO, Long ownerID) {
         setCurrency(createAccountWithoutOwnerIdDTO.getCurrency());
         setStatus(createAccountWithoutOwnerIdDTO.getStatus());
@@ -45,5 +47,6 @@ public class CreateAccountDTO {
         setOwnerID(ownerID);
         setCreateCard(createAccountWithoutOwnerIdDTO.getCreateCard());
         setBalance(createAccountWithoutOwnerIdDTO.getBalance());
+        setCompanyData(createAccountWithoutOwnerIdDTO.getCompanyData());
     }
 }

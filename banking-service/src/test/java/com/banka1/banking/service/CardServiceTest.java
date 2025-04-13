@@ -65,7 +65,7 @@ public class CardServiceTest {
         account.setSubtype(AccountSubtype.PERSONAL);
 
         when(accountRepository.findById(createCardDTO.getAccountID())).thenReturn(Optional.of(account));
-        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(new ArrayList<>()));
+//        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(new ArrayList<>()));
 
         when(authorizedPersonRepository.findByFirstNameAndLastNameAndPhoneNumber(
                 personDTO.getFirstName(), personDTO.getLastName(), personDTO.getPhoneNumber()))
@@ -124,7 +124,7 @@ public class CardServiceTest {
         cards.add(new Card());
         cards.add(new Card());
 
-        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(cards));
+        when(cardRepository.findByAccountIdAndActive(createCardDTO.getAccountID(), true)).thenReturn(Optional.of(cards));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             cardService.createCard(createCardDTO);
@@ -157,7 +157,7 @@ public class CardServiceTest {
         cards.add(new Card());
         cards.add(new Card());
 
-        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(cards));
+        when(cardRepository.findByAccountIdAndActive(createCardDTO.getAccountID(), true)).thenReturn(Optional.of(cards));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             cardService.createCard(createCardDTO);
@@ -183,7 +183,7 @@ public class CardServiceTest {
         account.setSubtype(AccountSubtype.PERSONAL);
 
         when(accountRepository.findById(createCardDTO.getAccountID())).thenReturn(Optional.of(account));
-        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(new ArrayList<>()));
+//        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(new ArrayList<>()));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             cardService.createCard(createCardDTO);
@@ -209,7 +209,7 @@ public class CardServiceTest {
         account.setSubtype(AccountSubtype.PERSONAL);
 
         when(accountRepository.findById(createCardDTO.getAccountID())).thenReturn(Optional.of(account));
-        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(new ArrayList<>()));
+//        when(cardRepository.findByAccountId(createCardDTO.getAccountID())).thenReturn(Optional.of(new ArrayList<>()));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             cardService.createCard(createCardDTO);
